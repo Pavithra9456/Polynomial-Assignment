@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
+typedef struct {
+    int x; 
+    int y; 
+} Root;
+
+int decode_y(int base, const char* value) {
+    int result = 0;
+    int len = strlen(value);
+    for (int i = 0; i < len; i++) {
+        result = result * base + (value[i] - '0');
+    }
+    return result;
+}
+
+double lagrange_interpolation(Root* roots, int n) {
+    double c = 0.0;
+    
+    for (int i = 0; i < n; i++) {
+        double term = roots[i].y;
+    for (int j = 0; j < n; j++) {
+            if (j != i) {
+                term *= (0 - roots[j].x) / (roots[i].x - roots[j].x); 
+            }
+        }
+        c += term;
+    }
+    
+    return c;
+}
+
+int main() {
+    int n = 4;
+    int k = 3;
+    Root roots[4];
+
+    roots[0].x = 1; roots[0].y = decode_y(10, "4");  // y = 4
+    roots[1].x = 2; roots[1].y = decode_y(2, "111"); // y = 7
+    roots[2].x = 3; roots[2].y = decode_y(10, "12"); // y = 12
+    roots[3].x = 6; roots[3].y = decode_y(4, "213"); // y = 39
+
+    double c = lagrange_interpolation(roots, n);
+    
+    printf("The constant term c of the polynomial is: %.0f\n", c);
+
+    return 0;
+}
+
